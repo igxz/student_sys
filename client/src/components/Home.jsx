@@ -1,13 +1,14 @@
 import React from 'react';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { getSudentApi } from '../api/stuApi';
+import { NavLink } from 'react-router-dom';
 
 const Home = () => {
   const [stuList, setStuList] = useState([]);
   const [searchItem, setSearchItem] = useState([]);
 
   useEffect(() => {
-    getSudentApi().then(({data}) => {
+    getSudentApi().then(({ data }) => {
       // console.log(res);
       setStuList(data);
     });
@@ -21,7 +22,11 @@ const Home = () => {
   const trData = useMemo(() => {
     return stuList.map((s, index) => (
       <tr key={index}>
-        <td>{s.id}</td>
+        <td>
+          <NavLink to={`/edit/${s.id}`} className='navigation'>
+            {s.id}
+          </NavLink>
+        </td>
         <td>{s.name}</td>
         <td>{s.age}</td>
         <td>{s.phone}</td>
