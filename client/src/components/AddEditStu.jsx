@@ -53,13 +53,12 @@ const AddEditStu = () => {
         }
       }
 
-      // console.log(stu);
       if (id) {
         // Edit
         editSudentByIdApi(id, stu).then(() => {
           navigate('/home', {
             state: {
-              alert: 'Student updated successfully',
+              alert: `Student '${stu.name}' updated successfully!`,
               type: 'info',
             },
           });
@@ -68,14 +67,17 @@ const AddEditStu = () => {
         await addSudentApi(stu);
         navigate('/home', {
           state: {
-            alert: 'Student added successfully',
-            type: 'success',
-          },
+            alert: `Student '${stu.name}' added successfully!`,
+            type: 'success', },
         });
       }
     },
-    [navigate, stu]
+    [navigate, id, stu]
   );
+
+  const handleCancel = useCallback(() => {
+    navigate('/home');
+  },[navigate]);
 
   return (
     <div className='container'>
@@ -159,6 +161,7 @@ const AddEditStu = () => {
           <button type='submit' className='btn btn-primary'>
             {id ? 'Confirm update' : 'Confirm add'}
           </button>
+          <button type='button' style={{marginLeft: '1em'}} className='btn btn-danger' onClick={handleCancel}>Cancel</button>
         </div>
       </form>
     </div>

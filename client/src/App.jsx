@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import Home from './components/Home';
 import About from './components/About';
 import AddEditStu from './components/AddEditStu';
+import StuDetail from "./components/StuDetail";
 import './App.css';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path='/home' element={<Home />} />
           <Route path='/about' element={<About />} />
           <Route path='/add' element={<AddEditStu />} />
+          <Route path='/detail/:id' element={<StuDetail />} />
           <Route path="/edit/:id" element={<AddEditStu />} />
           <Route path='/' element={<Navigate replace to='/home' />} />
         </Routes>
