@@ -38,3 +38,9 @@ tr,
 th {
     text-align: center;
 }
+
+.glyphicon::before{
+    position: relative;
+    top: 0.1em;
+    margin-right: 0.5em;
+}

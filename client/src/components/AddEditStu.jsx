@@ -161,7 +161,7 @@ const AddEditStu = () => {
           <button type='submit' className='btn btn-primary'>
             {id ? 'Confirm update' : 'Confirm add'}
           </button>
-          <button type='button' style={{marginLeft: '1em'}} className='btn btn-danger' onClick={handleCancel}>Cancel</button>
+          <button type='button' style={{marginLeft: '1 em'}} className='btn btn-danger' onClick={handleCancel}>Cancel</button>
         </div>
       </form>
     </div>

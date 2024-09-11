@@ -6,6 +6,8 @@ import { useLocation, NavLink } from 'react-router-dom';
 
 const Home = () => {
   const [stuList, setStuList] = useState([]);
+  const [fullStuList, setFullStuList] = useState([]); // Full original student list
+
   const [searchItem, setSearchItem] = useState([]);
   const [alert, setAlert] = useState(null);
 
@@ -15,6 +17,7 @@ const Home = () => {
     getSudentApi().then(({ data }) => {
       // console.log(res);
       setStuList(data);
+      setFullStuList(data); // Store original data separately
     });
   }, []);
 
@@ -26,10 +29,24 @@ const Home = () => {
 
   const showAlert = alert ? <Alert {...alert} /> : null;
 
-  const handleSearch = useCallback((searchItem) => {
-    console.log(searchItem);
-    setSearchItem(searchItem);
-  }, []);
+  // Search and filter logic
+  const handleSearch = useCallback(
+    (searchItem) => {
+      setSearchItem(searchItem);
+
+      // If the search item is empty, reset to the full list
+      if (!searchItem.trim()) {
+        setStuList(fullStuList);
+      } else {
+        // Filter the original list based on the search input
+        const filteredStudents = fullStuList.filter((s) =>
+          s.name.toLowerCase().includes(searchItem.toLowerCase())
+        );
+        setStuList(filteredStudents);
+      }
+    },
+    [fullStuList]
+  );
 
   const trData = useMemo(() => {
     return stuList.map((s, index) => (
