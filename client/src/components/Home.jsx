@@ -1,25 +1,25 @@
 import React from 'react';
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { getSudentApi } from '../api/stuApi';
 import Alert from './Alert';
+import { fetchStuListAsync } from '../redux/stuSlice';
 import { useLocation, NavLink } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Home = () => {
-  const [stuList, setStuList] = useState([]);
-  const [fullStuList, setFullStuList] = useState([]); // Full original student list
-
-  const [searchItem, setSearchItem] = useState([]);
+  const { stuList } = useSelector((state) => state.stu);
+  const [searchItem, setSearchItem] = useState('');
   const [alert, setAlert] = useState(null);
 
   const location = useLocation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getSudentApi().then(({ data }) => {
-      // console.log(res);
-      setStuList(data);
-      setFullStuList(data); // Store original data separately
-    });
-  }, []);
+    // get the state from redux store
+    if (!stuList.length) {
+      // if no data from the store, get the data from backend by dispatching a action to the store
+      dispatch(fetchStuListAsync());
+    }
+  }, [stuList, dispatch]);
 
   useEffect(() => {
     if (location.state) {
@@ -33,23 +33,17 @@ const Home = () => {
   const handleSearch = useCallback(
     (searchItem) => {
       setSearchItem(searchItem);
-
-      // If the search item is empty, reset to the full list
-      if (!searchItem.trim()) {
-        setStuList(fullStuList);
-      } else {
-        // Filter the original list based on the search input
-        const filteredStudents = fullStuList.filter((s) =>
-          s.name.toLowerCase().includes(searchItem.toLowerCase())
-        );
-        setStuList(filteredStudents);
-      }
     },
-    [fullStuList]
+    []
   );
 
   const trData = useMemo(() => {
-    return stuList.map((s, index) => (
+    const data = (!searchItem.trim())
+      ? stuList
+      : stuList.filter((s) =>
+          s.name.toLowerCase().includes(searchItem.toLowerCase())
+        );
+    return data.map((s, index) => (
       <tr key={index}>
         <td>
           <NavLink to={`/detail/${s.id}`} className='navigation'>
@@ -62,7 +56,7 @@ const Home = () => {
         <td>{s.email}</td>
       </tr>
     ));
-  }, [stuList]);
+  }, [stuList, searchItem]);
 
   return (
     <div>

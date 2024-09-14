@@ -1,16 +1,6 @@
 {
   "students": [
     {
-      "name": "xiejie",
-      "age": "30",
-      "phone": "333-444-555",
-      "email": "xiejie@gmail.com",
-      "education": "adsfasfd",
-      "profession": "asdfasdf",
-      "profile": "asdfasfdasdf",
-      "id": "1"
-    },
-    {
       "name": "yajing",
       "age": "34",
       "phone": "123-345-678",

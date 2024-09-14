@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSudentByIdApi, deleteSudentByIdApi } from '../api/stuApi';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteStuByIdAsync } from '../redux/stuSlice';
 
 const StuDetail = () => {
   const { id } = useParams();
+  const { stuList } = useSelector((state) => state.stu);
+  const dispatch = useDispatch();
 
   const [stu, setStu] = useState({
     name: '',
@@ -19,20 +22,23 @@ const StuDetail = () => {
 
   // get student details
   useEffect(() => {
-    getSudentByIdApi(id).then(({ data }) => {
-      setStu(data);
-    });
-  }, [id]);
+    // no need to connect to backend for each rendering, data sould be retrieved from store
+    // getSudentByIdApi(id).then(({ data }) => {
+    //   setStu(data);
+    // });
+
+    const stu = stuList.filter((s) => s.id === id);
+    setStu(stu[0]);
+  }, [id, stuList]);
 
   function deleteStu(id) {
     if (window.confirm('are you sure to delete？')) {
-      deleteSudentByIdApi(id).then(() => {
-        navigate('/home', {
-          state: {
-            alert: `Student: ${stu.name} deleted successfully!`,
-            type: 'info',
-          },
-        });
+      dispatch(deleteStuByIdAsync(id));
+      navigate('/home', {
+        state: {
+          alert: `Student: ${stu.name} deleted successfully!`,
+          type: 'info',
+        },
       });
     }
   }
