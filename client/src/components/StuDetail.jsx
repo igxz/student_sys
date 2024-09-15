@@ -22,11 +22,6 @@ const StuDetail = () => {
 
   // get student details
   useEffect(() => {
-    // no need to connect to backend for each rendering, data sould be retrieved from store
-    // getSudentByIdApi(id).then(({ data }) => {
-    //   setStu(data);
-    // });
-
     const stu = stuList.filter((s) => s.id === id);
     setStu(stu[0]);
   }, [id, stuList]);

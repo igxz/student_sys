@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  getSudentByIdApi,
-  addSudentApi,
-  editSudentByIdApi,
-} from '../api/stuApi';
+import { useSelector, useDispatch } from 'react-redux';
+import { addSudentApi } from '../api/stuApi';
+import { editStuByIdAsync } from '../redux/stuSlice';
 
 const AddEditStu = () => {
   const navigate = useNavigate();
 
   // determine whether edit or edit by checking if the id parameter is present
   const { id } = useParams();
+
+  const { stuList } = useSelector((state) => state.stu);
+  const dispatch = useDispatch();
 
   // create the state object
   const [stu, setStu] = useState({
@@ -23,13 +24,11 @@ const AddEditStu = () => {
     profile: '',
   });
 
+  // get student details
   useEffect(() => {
-    if (id) {
-      getSudentByIdApi(id).then(({ data }) => {
-        setStu(data);
-      });
-    }
-  }, [id]);
+    const stu = stuList.filter((s) => s.id === id);
+    setStu(stu[0]);
+  }, [id, stuList]);
 
   function updateStuInfo(newInfo, key) {
     // 根据对应的 key 来更新信息
@@ -55,20 +54,21 @@ const AddEditStu = () => {
 
       if (id) {
         // Edit
-        editSudentByIdApi(id, stu).then(() => {
-          navigate('/home', {
-            state: {
-              alert: `Student '${stu.name}' updated successfully!`,
-              type: 'info',
-            },
-          });
+        dispatch(editStuByIdAsync({id, stu}));
+        navigate('/home', {
+          state: {
+            alert: `Student '${stu.name}' updated successfully!`,
+            type: 'info',
+          },
         });
-      } else { // Add
+      } else {
+        // Add
         await addSudentApi(stu);
         navigate('/home', {
           state: {
             alert: `Student '${stu.name}' added successfully!`,
-            type: 'success', },
+            type: 'success',
+          },
         });
       }
     },
@@ -77,7 +77,7 @@ const AddEditStu = () => {
 
   const handleCancel = useCallback(() => {
     navigate('/home');
-  },[navigate]);
+  }, [navigate]);
 
   return (
     <div className='container'>
@@ -161,7 +161,14 @@ const AddEditStu = () => {
           <button type='submit' className='btn btn-primary'>
             {id ? 'Confirm update' : 'Confirm add'}
           </button>
-          <button type='button' style={{marginLeft: '1 em'}} className='btn btn-danger' onClick={handleCancel}>Cancel</button>
+          <button
+            type='button'
+            style={{ marginLeft: '1 em' }}
+            className='btn btn-danger'
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
         </div>
       </form>
     </div>

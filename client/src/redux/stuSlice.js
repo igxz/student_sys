@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getSudentApi, deleteSudentByIdApi } from '../api/stuApi';
+import {
+  getSudentApi,
+  deleteSudentByIdApi,
+  editSudentByIdApi,
+} from '../api/stuApi';
 
 // async fetch all students
 export const fetchStuListAsync = createAsyncThunk(
@@ -7,7 +11,6 @@ export const fetchStuListAsync = createAsyncThunk(
   async (_, thunkApi) => {
     // send ajax request
     const response = await getSudentApi();
-    // console.log(response.data);
     // dispatch action
     thunkApi.dispatch(initStuList(response.data));
   }
@@ -15,15 +18,26 @@ export const fetchStuListAsync = createAsyncThunk(
 
 // async delete a student by id
 export const deleteStuByIdAsync = createAsyncThunk(
-    'stu/delStuByIdAysnc',
-    async (payload, thunkApi) => {
-        // console.log(payload, 'payload >>>')
-      //send ajax request
-      deleteSudentByIdApi(payload);
-      // dispatch action
-      thunkApi.dispatch(deleteStu(payload));
-    }
-  );
+  'stu/delStuByIdAysnc',
+  async (payload, thunkApi) => {
+    //send ajax request
+    deleteSudentByIdApi(payload);
+    // dispatch action
+    thunkApi.dispatch(deleteStu(payload));
+  }
+);
+
+// async edit a student by id
+export const editStuByIdAsync = createAsyncThunk(
+  'stu/editStuByIdAysnc',
+  async (payload, thunkApi) => {
+    console.log(payload, '<<< payload');
+    //send ajax request
+    editSudentByIdApi(payload.id, payload.stu);
+    // dispatch action
+    thunkApi.dispatch(editStu(payload));
+  }
+);
 
 const initialState = {
   stuList: [],
@@ -38,16 +52,25 @@ const stuSlice = createSlice({
       state.stuList = payload;
     },
     // delete a student by id
-    deleteStu: (state, {payload})=> {
-        for (let i = 0; i < state.stuList.length; i++) {
-            if(state.stuList[i].id === payload){
-                state.stuList.splice(i,1);
-                break;
-            }
+    deleteStu: (state, { payload }) => {
+      for (let i = 0; i < state.stuList.length; i++) {
+        if (state.stuList[i].id === payload) {
+          state.stuList.splice(i, 1);
+          break;
         }
+      }
+    },
+    // edit a student by id
+    editStu: (state, { payload }) => {
+      for (let i = 0; i < state.stuList.length; i++) {
+        if (state.stuList[i].id === payload.id) {
+          state.stuList.splice(i, 1, payload.stu);
+          break;
+        }
+      }
     },
   },
 });
 
-export const { initStuList, deleteStu } = stuSlice.actions;
+export const { initStuList, deleteStu, editStu } = stuSlice.actions;
 export default stuSlice.reducer;
