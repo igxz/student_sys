@@ -38,8 +38,8 @@ function App() {
         <Routes>
           <Route path='/home' element={<Home />} />
           <Route path='/about' element={<About />} />
-          <Route path='/add' element={<AddEditStu />} />
           <Route path='/detail/:id' element={<StuDetail />} />
+          <Route path='/add' element={<AddEditStu />} />
           <Route path="/edit/:id" element={<AddEditStu />} />
           <Route path='/' element={<Navigate replace to='/home' />} />
         </Routes>

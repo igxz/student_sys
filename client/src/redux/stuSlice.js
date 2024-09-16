@@ -89,5 +89,5 @@ const stuSlice = createSlice({
   },
 });
 
-export const { initStuList, deleteStu, editStu, addStu } = stuSlice.actions;
+const { initStuList, deleteStu, editStu, addStu } = stuSlice.actions;
 export default stuSlice.reducer;
