@@ -3,6 +3,7 @@ import {
   getSudentApi,
   deleteSudentByIdApi,
   editSudentByIdApi,
+  addSudentApi
 } from '../api/stuApi';
 
 // async fetch all students
@@ -31,13 +32,25 @@ export const deleteStuByIdAsync = createAsyncThunk(
 export const editStuByIdAsync = createAsyncThunk(
   'stu/editStuByIdAysnc',
   async (payload, thunkApi) => {
-    console.log(payload, '<<< payload');
+    // console.log(payload, '<<< payload');
     //send ajax request
-    editSudentByIdApi(payload.id, payload.stu);
+    await editSudentByIdApi(payload.id, payload.stu);
     // dispatch action
     thunkApi.dispatch(editStu(payload));
   }
 );
+
+// add a student
+export const addStuAsync = createAsyncThunk(
+    'stu/addStuByIdAysnc',
+    async (payload, thunkApi) => {
+    //   console.log(payload, '<<< payload');
+      //send ajax request
+      const {data} = await addSudentApi(payload);
+      // dispatch action
+      thunkApi.dispatch(addStu(data));
+    }
+  );
 
 const initialState = {
   stuList: [],
@@ -69,8 +82,12 @@ const stuSlice = createSlice({
         }
       }
     },
+    // add a student
+    addStu: (state, {payload}) => {
+        state.stuList.push(payload);
+    }
   },
 });
 
-export const { initStuList, deleteStu, editStu } = stuSlice.actions;
+export const { initStuList, deleteStu, editStu, addStu } = stuSlice.actions;
 export default stuSlice.reducer;

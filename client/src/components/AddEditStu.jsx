@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { addSudentApi } from '../api/stuApi';
-import { editStuByIdAsync } from '../redux/stuSlice';
+import { editStuByIdAsync, addStuAsync } from '../redux/stuSlice';
 
 const AddEditStu = () => {
   const navigate = useNavigate();
@@ -19,15 +18,17 @@ const AddEditStu = () => {
     age: '',
     phone: '',
     email: '',
-    education: '',
+    education: 'High School',
     profession: '',
     profile: '',
   });
 
   // get student details
   useEffect(() => {
-    const stu = stuList.filter((s) => s.id === id);
-    setStu(stu[0]);
+    if (id) {
+      const stu = stuList.filter((s) => s.id === id);
+      setStu(stu[0]);
+    }
   }, [id, stuList]);
 
   function updateStuInfo(newInfo, key) {
@@ -37,7 +38,12 @@ const AddEditStu = () => {
     }
 
     const newStuInfo = { ...stu };
+    // Apply trim only for specific fields where spaces are not expected
+  if (['name', 'age', 'phone', 'email'].includes(key)) {
     newStuInfo[key] = newInfo.trim();
+  } else {
+    newStuInfo[key] = newInfo; // Do not trim spaces for fields like 'profile'
+  }
     setStu(newStuInfo);
   }
 
@@ -54,7 +60,7 @@ const AddEditStu = () => {
 
       if (id) {
         // Edit
-        dispatch(editStuByIdAsync({id, stu}));
+        dispatch(editStuByIdAsync({ id, stu }));
         navigate('/home', {
           state: {
             alert: `Student '${stu.name}' updated successfully!`,
@@ -63,7 +69,7 @@ const AddEditStu = () => {
         });
       } else {
         // Add
-        await addSudentApi(stu);
+        dispatch(addStuAsync(stu));
         navigate('/home', {
           state: {
             alert: `Student '${stu.name}' added successfully!`,
@@ -72,7 +78,7 @@ const AddEditStu = () => {
         });
       }
     },
-    [navigate, id, stu]
+    [navigate, id, stu, dispatch]
   );
 
   const handleCancel = useCallback(() => {
